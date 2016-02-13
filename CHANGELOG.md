@@ -1,4 +1,7 @@
 
+## 13/02/2016 (dduportal-1.10.0)
+- Moving boot2docker to 1.10.0 : https://github.com/boot2docker/boot2docker/releases/tag/v1.10.0
+
 ## 08/11/2015 (dduportal-1.9.1)
 - Moving boot2docker to 1.9.1 : https://github.com/boot2docker/boot2docker/releases/tag/v1.9.1
 - Simplifying build : no more custom install of rsync since
