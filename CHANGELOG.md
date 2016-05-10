@@ -1,4 +1,7 @@
 
+## 10/05/2016 (dduportal-1.10.3)
+- Moving boot2docker to 1.10.3 : https://github.com/boot2docker/boot2docker/releases/tag/v1.10.3 
+
 ## 13/02/2016 (dduportal-1.10.1)
 - Moving boot2docker to 1.10.1 : https://github.com/boot2docker/boot2docker/releases/tag/v1.10.1
 
