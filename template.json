@@ -12,6 +12,7 @@
             ["modifyvm","{{.Name}}","--memory","1536"],
             ["modifyvm","{{.Name}}","--nictype1","virtio"]
         ],
+        "disk_size": "120000",
         "iso_url": "{{user `B2D_ISO_FILE`}}",
         "iso_checksum_type": "md5",
         "iso_checksum": "{{user `B2D_ISO_CHECKSUM`}}",
@@ -26,6 +27,7 @@
         "vmx_data" : {
             "memsize": "1536"
           },
+        "disk_size": "120000",
         "iso_url": "{{user `B2D_ISO_FILE`}}",
         "iso_checksum_type": "md5",
         "iso_checksum": "{{user `B2D_ISO_CHECKSUM`}}",
@@ -36,6 +38,7 @@
         "shutdown_command": "sudo poweroff"
     }, {
         "type": "parallels-iso",
+        "disk_size": "120000",
         "iso_url": "{{user `B2D_ISO_FILE`}}",
         "iso_checksum_type": "md5",
         "iso_checksum": "{{user `B2D_ISO_CHECKSUM`}}",
