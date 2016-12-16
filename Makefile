@@ -2,7 +2,7 @@ BOOT2DOCKER_VERSION := 1.11.1
 
 B2D_ISO_FILE := boot2docker.iso
 B2D_ISO_URL := https://github.com/boot2docker/boot2docker/releases/download/v$(BOOT2DOCKER_VERSION)/boot2docker.iso
-B2D_ISO_CHECKSUM := 9be71967c5b43eb6468d45e4e3e0815d
+B2D_ISO_CHECKSUM := 5a45898be063f692e11abdaba94d41c9
 
 all: parallels virtualbox
 

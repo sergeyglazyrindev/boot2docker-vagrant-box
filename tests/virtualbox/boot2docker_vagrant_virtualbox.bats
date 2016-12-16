@@ -8,7 +8,7 @@ DOCKER_TARGET_VERSION=1.11.1
 @test "We can vagrant up the VM with basic settings" {
 	# Ensure the VM is stopped
 	run vagrant destroy -f
-	run vagrant box remove boot2docker-virtualbox-test
+	run vagrant box remove boot2docker-virtualbox-ansible-test
 	cp vagrantfile.orig Vagrantfile
 	vagrant up --provider=virtualbox
 	[ $( vagrant status | grep 'running' | wc -l ) -ge 1 ]
@@ -81,5 +81,5 @@ DOCKER_TARGET_VERSION=1.11.1
 
 @test "I can destroy and clean the VM" {
 	vagrant destroy -f
-	vagrant box remove boot2docker-virtualbox-test
+	vagrant box remove boot2docker-virtualbox-ansible-test
 }
