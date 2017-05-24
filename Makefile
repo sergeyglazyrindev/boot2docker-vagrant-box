@@ -2,7 +2,7 @@ BOOT2DOCKER_VERSION := 1.11.1
 
 B2D_ISO_FILE := boot2docker.iso
 B2D_ISO_URL := https://github.com/boot2docker/boot2docker/releases/download/v$(BOOT2DOCKER_VERSION)/boot2docker.iso
-B2D_ISO_CHECKSUM := 5a45898be063f692e11abdaba94d41c9
+B2D_ISO_CHECKSUM := 9be71967c5b43eb6468d45e4e3e0815d
 
 all: parallels virtualbox
 
@@ -29,7 +29,7 @@ build-parallels: $(B2D_ISO_FILE)
 		template.json
 
 clean-virtualbox:
-	rm -f *_virtualbox.box $(B2D_ISO_FILE)
+	rm -f *_virtualbox.box
 	@cd tests/virtualbox; vagrant destroy -f || :
 	@cd tests/virtualbox; rm -f Vagrantfile
 
