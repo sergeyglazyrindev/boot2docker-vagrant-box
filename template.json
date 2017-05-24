@@ -3,17 +3,19 @@
         "name": "dduportal/boot2docker"
     },
     "variables": {
-        "url": "https://github.com/boot2docker/boot2docker/releases/download/v1.7.0/boot2docker.iso",
-        "checksum": "3ebc29aecabc990c4303b9cc6ab26fa8acc673bfbfae3f2fbd8d827c0ff48183",
-        "version": "1.7",
-        "number": "{{env `ATLAS_BUILD_NUMBER`}}"
+        "B2D_ISO_FILE": "boot2docker.iso",
+        "B2D_ISO_CHECKSUM": "7e231d3c33e08f08b604fdc9a557b64b"
     },
-
     "builders": [{
         "type": "virtualbox-iso",
-        "iso_url": "{{user `url`}}",
-        "iso_checksum_type": "sha256",
-        "iso_checksum": "{{user `checksum`}}",
+        "vboxmanage": [
+            ["modifyvm","{{.Name}}","--memory","1536"],
+            ["modifyvm","{{.Name}}","--nictype1","virtio"]
+        ],
+        "disk_size": "120000",
+        "iso_url": "{{user `B2D_ISO_FILE`}}",
+        "iso_checksum_type": "md5",
+        "iso_checksum": "{{user `B2D_ISO_CHECKSUM`}}",
         "boot_wait": "5s",
         "guest_additions_mode": "attach",
         "guest_os_type": "Linux_64",
@@ -22,9 +24,13 @@
         "shutdown_command": "sudo poweroff"
     }, {
         "type": "vmware-iso",
-        "iso_url": "{{user `url`}}",
-        "iso_checksum_type": "sha256",
-        "iso_checksum": "{{user `checksum`}}",
+        "vmx_data" : {
+            "memsize": "1536"
+          },
+        "disk_size": "120000",
+        "iso_url": "{{user `B2D_ISO_FILE`}}",
+        "iso_checksum_type": "md5",
+        "iso_checksum": "{{user `B2D_ISO_CHECKSUM`}}",
         "boot_wait": "5s",
         "guest_os_type": "other3xlinux-64",
         "ssh_username": "docker",
@@ -32,73 +38,37 @@
         "shutdown_command": "sudo poweroff"
     }, {
         "type": "parallels-iso",
-        "iso_url": "{{user `url`}}",
-        "iso_checksum_type": "sha256",
-        "iso_checksum": "{{user `checksum`}}",
+        "disk_size": "120000",
+        "iso_url": "{{user `B2D_ISO_FILE`}}",
+        "iso_checksum_type": "md5",
+        "iso_checksum": "{{user `B2D_ISO_CHECKSUM`}}",
         "boot_wait": "5s",
         "guest_os_type": "linux-2.6",
         "ssh_username": "docker",
         "ssh_password": "tcuser",
-        "shutdown_command": "sudo poweroff"
+        "shutdown_command": "sudo poweroff",
+        "parallels_tools_mode": "disable",
+        "prlctl": [
+            ["set", "{{.Name}}", "--memsize", "1536"]
+        ]
     }],
-
-    "provisioners": [{
-       "type": "shell-local",
-       "command": "chmod +x ./download.sh && ./download.sh '{{user `url`}}' {{user `checksum`}}"
-    }, {
-      "type": "shell",
-      "except": ["vmware-iso"],
-      "inline": [
-          "mkfs.ext4 -F -L boot2docker-data /dev/sda",
-          "sudo mkdir /mnt/sda",
-          "sudo mount /dev/sda /mnt/sda",
-          "sudo mkdir -p /mnt/sda/var/lib/boot2docker",
-          "sudo echo 'export DOCKER_TLS=no' > /tmp/profile",
-          "sudo mv /tmp/profile /mnt/sda/var/lib/boot2docker/profile",
-          "sudo chown root:root /mnt/sda/var/lib/boot2docker/profile",
-          "sync"
-      ]
-    }, {
-      "type": "shell",
-      "only": ["vmware-iso"],
-      "inline": [
-          "sudo mkdir -p /mnt/sda1/var/lib/boot2docker",
-          "sudo echo 'export DOCKER_TLS=no' > /tmp/profile",
-          "sudo mv /tmp/profile /mnt/sda1/var/lib/boot2docker/profile",
-          "sudo chown root:root /mnt/sda1/var/lib/boot2docker/profile",
-          "sync"
-      ]
-    }],
-
-    "post-processors": [[{
+    "provisioners": [
+        {
+            "type": "file",
+            "source": "{{user `B2D_ISO_FILE`}}",
+            "destination": "/tmp/boot2docker-vagrant.iso"
+        },
+        {
+            "type": "shell",
+            "execute_command": "{{ .Vars }} sudo -E -S sh '{{ .Path }}'",
+            "scripts": [
+                "./scripts/b2d-provision.sh"
+            ]
+        }
+    ],
+    "post-processors": [{
         "type": "vagrant",
-        "include": ["boot2docker.iso"],
         "vagrantfile_template": "vagrantfile.tpl",
         "output": "boot2docker_{{.Provider}}.box"
-    },{
-        "type": "atlas",
-        "only": ["vmware-iso"],
-        "artifact": "hashicorp/boot2docker",
-        "artifact_type": "vagrant.box",
-        "metadata": {
-            "provider": "vmware_desktop",
-            "version": "{{user `version`}}.{{user `number`}}",
-            "description": "boot2docker v{{user `version`}}. The last part of the version is just a build number we increment as we make patch changes to the Vagrant box."
-        }
-    },{
-        "type": "atlas",
-        "only": ["virtualbox-iso"],
-        "artifact": "hashicorp/boot2docker",
-        "artifact_type": "vagrant.box",
-        "metadata": {
-            "provider": "virtualbox",
-            "version": "{{user `version`}}.{{user `number`}}",
-            "description": "boot2docker v{{user `version`}}. The last part of the version is just a build number we increment as we make patch changes to the Vagrant box."
-        }
-    }]],
-
-    "push": {
-        "name": "hashicorp/boot2docker",
-        "vcs": true
-    }
+    }]
 }
